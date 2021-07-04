@@ -8,7 +8,7 @@ project("rtmpdemo")
 add_subdirectory(librtmp)
 include_directories(librtmp ${CMAKE_SOURCE_DIR}/libx264/include)
 
-set(libX264Path libx264/libs/${CMAKE_ANDROID_ARCH_ABI})
+set(libX264Path ${CMAKE_SOURCE_DIR}/libx264/libs/${CMAKE_ANDROID_ARCH_ABI})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L${libX264Path}")
 
@@ -29,7 +29,8 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        native-lib
-
+                       rtmp
+                        x264
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )

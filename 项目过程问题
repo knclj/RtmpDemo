@@ -2,18 +2,5 @@
 需要在cmake 中include_directories(librtmp libx264/include)
 添加到环境变量中.
 
-### 运行问题
-在运行时报这个错误
-`Java_com_test_rtmpdemo_MainActivity_stringFromJNI':
-/RtmpDemo/app/src/main/cpp/native-lib.cpp:12: undefined reference to `RTMP_LibVersion'
-clang++: error: linker command failed with exit code 1 (use -v to see invocation)
-ninja: build stopped: subcommand failed.
 
-查看错误信息:
-Error while executing process XXX/android-sdk-macosx/cmake/3.10.2.4988404/bin/ninja with arguments {-C /Users/jsoncai/AndroidStudioProjects/RtmpDemo/app/.cxx/cmake/debug/arm64-v8a native-lib}
-ninja: Entering directory `XXX/RtmpDemo/app/.cxx/cmake/debug/arm64-v8a'
-[1/2] Building CXX object CMakeFiles/native-lib.dir/native-lib.cpp.o
-clang++: warning: argument unused during compilation: '-Llibx264/libs/arm64-v8a' [-Wunused-command-line-argument]
-
-发现链接库路径写错了.只支持armeabi-v7a
 
