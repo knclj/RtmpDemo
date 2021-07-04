@@ -9,7 +9,7 @@ Java_com_test_rtmpdemo_MainActivity_stringFromJNI(
         JNIEnv* env,
         jobject /* this */) {
     char version[50];
-    sprintf(version,"librtmp version:%d",RTMP_LibVersion());
+    sprintf(version,"librtmp version:%x",RTMP_LibVersion());
     x264_picture_t * picture = new x264_picture_t ;
     return env->NewStringUTF(version);
 }
