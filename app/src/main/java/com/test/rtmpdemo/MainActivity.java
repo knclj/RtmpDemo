@@ -1,9 +1,12 @@
 package com.test.rtmpdemo;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
@@ -12,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Size;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                    cameraProvider  = cameraProviderFuture.get();
-                    bindPreview(cameraProvider);
+                    bindPreview();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -58,12 +62,36 @@ public class MainActivity extends AppCompatActivity {
         }, ContextCompat.getMainExecutor(this));
     }
 
-    private void bindPreview(ProcessCameraProvider cameraProvider) {
+    private void bindPreview() {
+        if(cameraProvider == null){
+            return;
+        }
+        cameraProvider.unbindAll();
         Preview preview = new  Preview.Builder().build();
+        if(CAMERA_INDEX == CameraSelector.LENS_FACING_FRONT){
+            CAMERA_INDEX = CameraSelector.LENS_FACING_BACK;
+        }else{
+            CAMERA_INDEX = CameraSelector.LENS_FACING_FRONT;
+        }
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CAMERA_INDEX)
                 .build();
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
+        ImageAnalysis imageAnalysis =
+                new ImageAnalysis.Builder()
+                        .setTargetResolution(new Size(1280, 720))
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build();
+
+        imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), new ImageAnalysis.Analyzer() {
+            @Override
+            public void analyze(@NonNull ImageProxy image) {
+              int rotationDegress =  image.getImageInfo().getRotationDegrees();
+
+            }
+        });
+
+        cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
         Camera camera = cameraProvider.bindToLifecycle(this,cameraSelector,preview);
 
     }
@@ -79,19 +107,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBtnSwitchCamera(View view) {
-        if(cameraProvider != null){
-            cameraProvider.unbindAll();
-            Preview preview = new  Preview.Builder().build();
-            if(CAMERA_INDEX == CameraSelector.LENS_FACING_FRONT){
-                CAMERA_INDEX = CameraSelector.LENS_FACING_BACK;
-            }else{
-                CAMERA_INDEX = CameraSelector.LENS_FACING_FRONT;
-            }
-            CameraSelector cameraSelector = new CameraSelector.Builder()
-                    .requireLensFacing(CAMERA_INDEX)
-                    .build();
-            preview.setSurfaceProvider(previewView.getSurfaceProvider());
-            Camera camera = cameraProvider.bindToLifecycle(this,cameraSelector,preview);
-        }
+        bindPreview();
     }
 }

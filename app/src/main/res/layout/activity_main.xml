@@ -17,19 +17,29 @@
         />
 
     <Button
-        android:id="@+id/btn_push"
+        android:id="@+id/btn_push_start"
         android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:onClick="onBtnPush"
-        android:text="推流"/>
+        android:text="开始推流"/>
+
+    <Button
+        android:id="@+id/btn_push_stop"
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/btn_push_start"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="onBtnPush"
+        android:text="停止推流"/>
     <Button
         android:id="@+id/btn_switch_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/btn_push"
+        app:layout_constraintStart_toEndOf="@id/btn_push_stop"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="10dp"
         android:onClick="onBtnSwitchCamera"
