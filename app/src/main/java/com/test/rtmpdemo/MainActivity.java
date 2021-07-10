@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
-
+    private ProcessCameraProvider cameraProvider;
+    private int CAMERA_INDEX = CameraSelector.LENS_FACING_FRONT;
     private PreviewView previewView;
 
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                   cameraProvider  = cameraProviderFuture.get();
                     bindPreview(cameraProvider);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private void bindPreview(ProcessCameraProvider cameraProvider) {
         Preview preview = new  Preview.Builder().build();
         CameraSelector cameraSelector = new CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
+                .requireLensFacing(CAMERA_INDEX)
                 .build();
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
         Camera camera = cameraProvider.bindToLifecycle(this,cameraSelector,preview);
@@ -78,5 +79,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBtnSwitchCamera(View view) {
+        if(cameraProvider != null){
+            cameraProvider.unbindAll();
+            Preview preview = new  Preview.Builder().build();
+            if(CAMERA_INDEX == CameraSelector.LENS_FACING_FRONT){
+                CAMERA_INDEX = CameraSelector.LENS_FACING_BACK;
+            }else{
+                CAMERA_INDEX = CameraSelector.LENS_FACING_FRONT;
+            }
+            CameraSelector cameraSelector = new CameraSelector.Builder()
+                    .requireLensFacing(CAMERA_INDEX)
+                    .build();
+            preview.setSurfaceProvider(previewView.getSurfaceProvider());
+            Camera camera = cameraProvider.bindToLifecycle(this,cameraSelector,preview);
+        }
     }
 }
