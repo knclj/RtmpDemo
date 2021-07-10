@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/btn_push_start"
         app:layout_constraintTop_toTopOf="parent"
-        android:onClick="onBtnPush"
+        android:onClick="onBtnStop"
         android:text="停止推流"/>
     <Button
         android:id="@+id/btn_switch_camera"

@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private ProcessCameraProvider cameraProvider;
     private int CAMERA_INDEX = CameraSelector.LENS_FACING_FRONT;
     private PreviewView previewView;
+    private NativePush nativePush;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -60,11 +61,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }, ContextCompat.getMainExecutor(this));
+        nativePush = new NativePush(640,480,25,800000);
     }
 
     private void bindPreview() {
         if(cameraProvider == null){
             return;
+        }
+        if(nativePush != null){
+            nativePush.videoEncoderInit();
         }
         cameraProvider.unbindAll();
         Preview preview = new  Preview.Builder().build();
@@ -79,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
         ImageAnalysis imageAnalysis =
                 new ImageAnalysis.Builder()
-                        .setTargetResolution(new Size(1280, 720))
+                        .setTargetResolution(new Size(640, 480))
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build();
 
@@ -87,7 +92,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void analyze(@NonNull ImageProxy image) {
               int rotationDegress =  image.getImageInfo().getRotationDegrees();
-
+              if(isPush && nativePush != null){
+                    nativePush.native_pushVideo(new byte[0]);
+              }
             }
         });
 
@@ -102,11 +109,29 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String stringFromJNI();
 
+    private boolean isPush = false;
     public void onBtnPush(View view) {
-
+        isPush = true;
+        if(nativePush != null){
+            nativePush.startPush("rtmp://139.224.136.101/myapp");
+        }
     }
 
     public void onBtnSwitchCamera(View view) {
         bindPreview();
+    }
+
+    public void onBtnStop(View view) {
+        if(nativePush != null){
+            nativePush.stopPush();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(nativePush != null){
+            nativePush.release();
+        }
     }
 }

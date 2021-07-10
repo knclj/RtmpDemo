@@ -5,20 +5,42 @@ package com.test.rtmpdemo;
  */
 public class NativePush {
 
-    private int cameraId;
     private int width;
     private int height;
     private int fps;
     private int bitare;
 
 
-    public NativePush(int camareId,int width,int height,int fps,int bitare){
-        this.cameraId = camareId;
+    public NativePush(int width,int height,int fps,int bitare){
         this.width = width;
         this.height = height;
         this.fps = fps;
         this.bitare = bitare;
     }
+
+    public void init(){
+        native_init();
+    }
+    /**
+     * rtmp 地址
+     * @param path
+     */
+    public void startPush(String path){
+        native_start(path);
+    }
+
+    public void stopPush(){
+        native_stop();
+    }
+
+    public void release(){
+        native_release();
+    }
+
+    public void videoEncoderInit(){
+        native_initVideoEncoder(this.width,this.height,this.fps,this.bitare);
+    }
+
 
     public native void native_init();
 
