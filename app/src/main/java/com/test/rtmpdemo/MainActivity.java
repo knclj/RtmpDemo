@@ -13,8 +13,10 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.graphics.ImageFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Size;
 import android.view.View;
 import android.widget.Button;
@@ -22,9 +24,12 @@ import android.widget.TextView;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -50,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setText(stringFromJNI());
         previewView = findViewById(R.id.previewView);
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+        nativePush = new NativePush(640,480,25,800000);
         cameraProviderFuture.addListener(new Runnable() {
             @Override
             public void run() {
@@ -61,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }, ContextCompat.getMainExecutor(this));
-        nativePush = new NativePush(640,480,25,800000);
     }
 
     private void bindPreview() {
@@ -92,8 +97,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void analyze(@NonNull ImageProxy image) {
               int rotationDegress =  image.getImageInfo().getRotationDegrees();
+              Log.d(TAG,"analyze");
               if(isPush && nativePush != null){
-                    nativePush.native_pushVideo(new byte[0]);
+                  int format = image.getFormat();
+                  Log.i("NativePush","the format:"+format);
+                  if(format != ImageFormat.YUV_420_888){
+
+                      return;
+                  }
+                  ImageProxy.PlaneProxy[] planes =  image.getPlanes();
+                  //y
+                 ByteBuffer yByteBuffer =  planes[0].getBuffer();
+                 ByteBuffer uvByteBuffer = planes[2].getBuffer();
+                 int ySize = yByteBuffer.remaining();
+                 int uvSize = uvByteBuffer.remaining();
+                 byte[] data = new byte[ySize+uvSize];
+                 yByteBuffer.get(data,0,ySize);
+                 uvByteBuffer.get(data,ySize,uvSize);
+                    nativePush.native_pushVideo(data);
               }
             }
         });
@@ -113,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBtnPush(View view) {
         isPush = true;
         if(nativePush != null){
-            nativePush.startPush("rtmp://139.224.136.101/myapp");
+            nativePush.startPush("rtmp://sendtc3a.douyu.com/live/9981301raTDrkBPJ?wsSecret=c117137ef445c0ab6df5b515a7f7dec8&wsTime=60f2e76c&wsSeek=off&wm=0&tw=0&roirecognition=0&record=flv&origin=tct");
         }
     }
 

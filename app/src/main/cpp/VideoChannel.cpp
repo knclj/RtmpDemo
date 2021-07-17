@@ -81,6 +81,7 @@ void VideoChannel::initVideoEncoder(int width, int heigh, int fps, int bitrate) 
 }
 
 void VideoChannel::encodeData(signed char *data) {
+    LOGI("encodeData");
     pthread_mutex_lock(&mutex);
     //拷贝数据 Y分量数据
     memcpy(picture->img.plane[0],data,y_len);
@@ -185,7 +186,7 @@ void VideoChannel::sendSpsPps(uint8_t *sps, uint8_t *pps, int sps_len, int pps_l
 }
 
 void VideoChannel::sendFrame(int type, int payload, uint8_t *pPayload) {
-
+    LOGI("send Frame data")
     if(pPayload[2] == 0x00){
         pPayload+=4;
         payload-=4;

@@ -76,6 +76,7 @@ void* task_start(void * param){
       }
       start_time = RTMP_GetTime();
       //推流开始
+      LOGI("start push")
       realyPush = true;
       packets.setWork(1);
       RTMPPacket * packet;
