@@ -2,5 +2,4 @@
 需要在cmake 中include_directories(librtmp libx264/include)
 添加到环境变量中.
 
-
-
+TODO CameraX 数据回调
