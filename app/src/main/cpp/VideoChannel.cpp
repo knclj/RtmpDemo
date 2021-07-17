@@ -219,6 +219,6 @@ void VideoChannel::sendFrame(int type, int payload, uint8_t *pPayload) {
     framePkt->m_nTimeStamp = -1;
     framePkt->m_hasAbsTimestamp= 0;
     framePkt->m_headerType = RTMP_PACKET_SIZE_LARGE;
-
+    callback(framePkt);
 }
 
