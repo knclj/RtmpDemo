@@ -19,9 +19,11 @@ void VideoChannel::initVideoEncoder(int width, int heigh, int fps, int bitrate) 
     this->height = heigh;
     this->fps = fps;
     this->bitrate = bitrate;
-    if(){
-
+    if(!videoEncoder){
+        x264_encoder_close(videoEncoder);
+        videoEncoder = nullptr;
     }
+
 
 }
 
