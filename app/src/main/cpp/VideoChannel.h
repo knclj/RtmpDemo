@@ -37,6 +37,11 @@ public:
     void  setVideoCallback(VideoCallback callback);
    void initVideoEncoder(int width,int heigh,int fps,int bitrate);
 
+   void encodeData(signed char* data);
+
+    void sendSpsPps(uint8_t sps[100], uint8_t pps[100], int sps_len, int pps_len);
+
+    void sendFrame(int type, int payload, uint8_t *pPayload);
 };
 
 

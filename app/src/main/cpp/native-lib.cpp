@@ -148,6 +148,23 @@ Java_com_test_rtmpdemo_NativePush_native_1start(JNIEnv *env, jobject thiz, jstri
 
 extern "C"
 JNIEXPORT void JNICALL
+Java_com_test_rtmpdemo_NativePush_native_1initVideoEncoder(JNIEnv *env, jobject thiz, jint width,
+                                                           jint height, jint fps, jint bitrate) {
+    if(videoChannel){
+        videoChannel->initVideoEncoder(width,height,fps,bitrate);
+    }
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_test_rtmpdemo_NativePush_native_1pushVideo(JNIEnv *env, jobject thiz, jbyteArray bytes) {
+   jbyte *data =  env->GetByteArrayElements(bytes,nullptr);
+   videoChannel->encodeData(data);
+   env->ReleaseByteArrayElements(bytes,data,0);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
 Java_com_test_rtmpdemo_NativePush_native_1stop(JNIEnv *env, jobject thiz) {
 }
 
@@ -156,13 +173,3 @@ JNIEXPORT void JNICALL
 Java_com_test_rtmpdemo_NativePush_native_1release(JNIEnv *env, jobject thiz) {
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_test_rtmpdemo_NativePush_native_1initVideoEncoder(JNIEnv *env, jobject thiz, jint width,
-                                                           jint height, jint fps, jint bitrate) {
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_test_rtmpdemo_NativePush_native_1pushVideo(JNIEnv *env, jobject thiz, jbyteArray bytes) {
-}
